@@ -16,4 +16,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Instant Message"
-include ':app'
+include ':app', ':chat-ui'

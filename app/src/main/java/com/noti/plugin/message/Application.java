@@ -1,10 +1,9 @@
 package com.noti.plugin.message;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Build;
-
 import com.noti.plugin.Plugin;
 
 public class Application extends android.app.Application {
@@ -20,36 +19,15 @@ public class Application extends android.app.Application {
         plugin.setPluginDescription("Plugin for Receive call & message information");
         plugin.setAppPackageName(context.getPackageName());
         plugin.setSettingClass(MainActivity.class);
-        plugin.setPluginTitle("Telephony Plugin");
+        plugin.setPluginTitle("Instant Messaging");
         plugin.setRequireSensitiveAPI(false);
 
         checkPermission(context);
     }
 
     public static void checkPermission(Context context) {
-        Plugin.getInstance().setPluginReady(checkTelephonyPermission(context));
-    }
-
-    public static boolean checkTelephonyPermission(Context context) {
-        boolean isPermissionGranted = true;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            String[] permissions = new String[]{
-                    android.Manifest.permission.SEND_SMS,
-                    android.Manifest.permission.READ_SMS,
-                    android.Manifest.permission.RECEIVE_SMS,
-                    android.Manifest.permission.READ_CALL_LOG,
-                    android.Manifest.permission.READ_CONTACTS,
-                    android.Manifest.permission.READ_PHONE_STATE
-            };
-
-            for (String permission : permissions) {
-                if (context.checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-                    isPermissionGranted = false;
-                }
-            }
-        }
-
-        return isPermissionGranted;
+        boolean isNotificationPermission = Build.VERSION.SDK_INT < 31 || ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).areNotificationsEnabled();
+        Plugin.getInstance().setPluginReady(isNotificationPermission);
     }
 
     public static SharedPreferences getSharedPreferences(Context context) {
